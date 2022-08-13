@@ -52,7 +52,7 @@
     <origin rpy="${pi} 0 0" xyz="0 0 0.003445"/>
     <parent link="base_link"/>
     <child link="link_1"/>
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 0 -1"/>
     <limit lower="-2.96706" upper="2.96706" effort="0" velocity="0"/>
   </joint>
   <link name="link_2">
@@ -107,7 +107,8 @@
     </collision>
   </link>
   <joint name="joint_3" type="revolute">
-    <origin rpy="0 0 -1.04720367321" xyz="0.1525 -0.26414 0"/>
+    <!-- <origin rpy="0 0 -1.04720367321" xyz="0.1525 -0.26414 0"/> -->
+    <origin rpy="0 0 -2.61799387799" xyz="0.1525 -0.26414 0"/>
     <parent link="link_2"/>
     <child link="link_3"/>
     <axis xyz="0 0 -1"/>

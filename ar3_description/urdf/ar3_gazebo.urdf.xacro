@@ -113,11 +113,11 @@
     </collision>
   </link>
   <joint name="joint_3" type="revolute">
-    <origin rpy="0 0 -1.04720367321" xyz="0.1525 -0.26414 0"/>
+    <origin rpy="0 0 -2.61799387799" xyz="0.1525 -0.26414 0"/>
     <parent link="link_2"/>
     <child link="link_3"/>
     <axis xyz="0 0 -1"/>
-    <limit lower="0.0174533" upper="2.5080381" effort="100" velocity="100"/>
+    <limit lower="-1.55334 " upper="20.907571" effort="100" velocity="100"/>
   </joint>
   <link name="link_4">
     <inertial>

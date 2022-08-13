@@ -19,7 +19,7 @@
     <rosparam file="$(find ar3_moveit_config)/config/joint_limits.yaml" command="load" ns="ar3"/>
 
     <!-- Load universal robot description format (URDF) -->
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find ar3_description)/urdf/ar3.urdf.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro $(find ar3_description)/urdf/ar3.urdf.xacro"/>
 
     <!-- The semantic description that corresponds to the URDF -->
     <param name="robot_description_semantic" textfile="$(find ar3_moveit_config)/config/ar3.srdf" />
@@ -28,8 +28,8 @@
     <node name="ar3_hardware_interface" pkg="ar3_hardware_interface" type="ar3_hardware_interface_node" output="screen" launch-prefix="$(arg launch_prefix)"/>
 
     <!-- Start controllers -->
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/" 
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" 
           args="/ar3/controllers/state
-			    /ar3/controllers/position"/>
+			    /ar3/controllers/position --shutdown-timeout 1"/>
 
 </launch>

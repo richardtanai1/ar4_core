@@ -91,7 +91,7 @@
     <child
       link="link_1" />
     <axis
-      xyz="0 0 1" />
+      xyz="0 0 -1" />
   </joint>
   <link
     name="link_2">
@@ -191,7 +191,7 @@
     type="continuous">
     <origin
       xyz="0.1525 -0.26414 0"
-      rpy="3.3431E-16 -1.4164E-16 -1.4953816339" />
+      rpy="0 0 -2.61799387799" />
     <parent
       link="link_2" />
     <child

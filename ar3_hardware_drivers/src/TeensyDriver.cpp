@@ -45,18 +45,20 @@ void TeensyDriver::init(std::string port, int baudrate, int num_joints, std::vec
     enc_steps_.resize(num_joints_);
     enc_steps_per_deg_.resize(num_joints_);
     enc_calibrations_.resize(num_joints_);
+    joint_positions_.resize(num_joints_);
     for (int i = 0; i < num_joints_; ++i)
     {
         enc_steps_per_deg_[i] = enc_steps_per_deg[i];
     }
 
     // get current joint positions
-    msg = "JP\n";
-    exchange(msg);
-    for (int i = 0; i < num_joints_; ++i)
-    {
-        enc_commands_[i] = enc_steps_[i];
-    }
+    // msg = "JP\n";
+    // msg = "RP\n";
+    // exchange(msg);
+    // for (int i = 0; i < num_joints_; ++i)
+    // {
+    //     enc_commands_[i] = enc_steps_[i];
+    // }
 }
 
 TeensyDriver::TeensyDriver()
@@ -82,36 +84,50 @@ void TeensyDriver::setStepperSpeed(std::vector<double>& max_speed, std::vector<d
 void TeensyDriver::update(std::vector<double>& pos_commands, std::vector<double>& joint_positions)
 {
     // get updated position commands
-    jointPosToEncSteps(pos_commands, enc_commands_);
+    //jointPosToEncSteps(pos_commands, enc_commands_);
 
     // construct update message
-    std::string outMsg = "MT";
+    // std::string outMsg = "MT";
+    // for (int i = 0; i < num_joints_; ++i)
+    // {
+    //     outMsg += 'A' + i;
+    //     outMsg += std::to_string(enc_commands_[i]);
+    // }
+    // outMsg += "\n";
+
+    std::string outMsg = "RJ";
     for (int i = 0; i < num_joints_; ++i)
     {
         outMsg += 'A' + i;
-        outMsg += std::to_string(enc_commands_[i]);
+        outMsg += std::to_string(pos_commands[i]);
     }
+    outMsg += "G0.0Sp25Ac10Dc10Rm50WN";
     outMsg += "\n";
+
 
     // run the communication with board
     exchange(outMsg);
 
     // return updated joint_positions
-    encStepsToJointPos(enc_steps_ , joint_positions);
+    //encStepsToJointPos(enc_steps_ , joint_positions);
+    copytoJointPos(joint_positions);
 }
 
 void TeensyDriver::calibrateJoints()
 {
-    std::string outMsg = "JC\n";
+    //std::string outMsg = "JC\n";
+    std::string outMsg = "LLA1B1C1D1E1F1G0.0H-2.0I0.0J2.5K-2.0L2.5\n";
     sendCommand(outMsg);
 }
 
 void TeensyDriver::getJointPositions(std::vector<double>& joint_positions)
 {
     // get current joint positions
-    std::string msg = "JP\n";
+    //std::string msg = "JP\n";
+    std::string msg = "RP\n";
     exchange(msg);
-    encStepsToJointPos(enc_steps_, joint_positions);
+    //encStepsToJointPos(enc_steps_, joint_positions);
+    copytoJointPos(joint_positions);
 }
 
 // Send specific commands
@@ -137,18 +153,59 @@ void TeensyDriver::exchange(std::string outMsg)
         // print err
     }
     // parse msg
-    std::string header = inMsg.substr(0, 2);
-    if (header == "ST")
+    std::string header1 = inMsg.substr(0, 1);
+    std::string header2 = inMsg.substr(0, 2);
+    if (header1 == "1")
+    {
+        ROS_ERROR("Joint 1 Calibration Failed");
+    }
+    else if (header1 == "2")
+    {
+        ROS_ERROR("Joint 2 Calibration Failed");
+    }
+    else if (header1 == "3")
+    {
+        ROS_ERROR("Joint 3 Calibration Failed");
+    }
+    else if (header1 == "4")
+    {
+        ROS_ERROR("Joint 4 Calibration Failed");
+    }
+    else if (header1 == "5")
+    {
+        ROS_ERROR("Joint 5 Calibration Failed");
+    }
+    else if (header1 == "6")
+    {
+        ROS_ERROR("Joint 6 Calibration Failed");
+    }
+    else if (header2 == "ER")
+    {
+        // init acknowledgement
+        ROS_ERROR("Kinematic Error");
+    }
+    else if (header2 == "EL")
+    {
+        // init acknowledgement
+        ROS_ERROR("Requested Position Out of Limits");
+    }
+    else if (header1 == "A")
+    {
+        // init acknowledgement
+        // checkInit(inMsg);
+        updateJointAngles(inMsg);
+    }
+    else if (header2 == "ST")
     {
         // init acknowledgement
         checkInit(inMsg);   
     }
-    else if (header == "JC")
+    else if (header2 == "JC")
     {
         // encoder calibration values
         updateEncoderCalibrations(inMsg);
     }
-    else if (header == "JP")
+    else if (header2 == "JP")
     {
         // encoder steps
         updateEncoderSteps(inMsg);
@@ -156,7 +213,7 @@ void TeensyDriver::exchange(std::string outMsg)
     else
     {
         // unknown header
-        ROS_WARN("Unknown header %s", header);
+        ROS_WARN("Unknown header %s", header2);
     } 
 }
 
@@ -251,12 +308,39 @@ void TeensyDriver::updateEncoderSteps(std::string msg)
     enc_steps_[5] = std::stoi(msg.substr(idx6));
 }
 
+void TeensyDriver::updateJointAngles(std::string msg)
+{
+    size_t idx1 = msg.find("A");
+    size_t idx2 = msg.find("B");
+    size_t idx3 = msg.find("C");
+    size_t idx4 = msg.find("D");
+    size_t idx5 = msg.find("E");
+    size_t idx6 = msg.find("F");
+    size_t idx7 = msg.find("G");
+    joint_positions_[0] = std::stod(msg.substr(idx1 +1, idx2 - 1));
+    joint_positions_[1] = std::stod(msg.substr(idx2 +1, idx3 - 1));
+    joint_positions_[2] = std::stod(msg.substr(idx3 +1, idx4 - 1));
+    joint_positions_[3] = std::stod(msg.substr(idx4 +1, idx5 - 1));
+    joint_positions_[4] = std::stod(msg.substr(idx5 +1, idx6 - 1));
+    joint_positions_[5] = std::stod(msg.substr(idx6 +1, idx7 - 1));
+}
+
+
+
 void TeensyDriver::encStepsToJointPos(std::vector<int>& enc_steps, std::vector<double>& joint_positions)
 {
     for (int i = 0; i < enc_steps.size(); ++i)
     {
         // convert enc steps to joint deg
         joint_positions[i] = static_cast<double>(enc_steps[i]) / enc_steps_per_deg_[i];
+    }
+}
+
+void TeensyDriver::copytoJointPos(std::vector<double>& joint_positions)
+{
+    for (int i = 0; i < joint_positions.size(); ++i)
+    {
+        joint_positions[i] = joint_positions_[i];
     }
 }
 

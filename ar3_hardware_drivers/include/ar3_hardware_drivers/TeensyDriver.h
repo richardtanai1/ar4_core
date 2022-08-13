@@ -30,6 +30,7 @@ class TeensyDriver {
     std::vector<int> enc_commands_;
     std::vector<int> enc_steps_;
     std::vector<double> enc_steps_per_deg_;
+    std::vector<double> joint_positions_;
     std::vector<int> enc_calibrations_;
 
 
@@ -42,9 +43,11 @@ class TeensyDriver {
     void checkInit(std::string msg);
     void updateEncoderCalibrations(std::string msg);
     void updateEncoderSteps(std::string msg);
+    void updateJointAngles(std::string msg);
 
     // Convert between encoder steps and joint angle degrees
     void encStepsToJointPos(std::vector<int>& enc_steps, std::vector<double>& joint_positions);
+    void copytoJointPos(std::vector<double>& joint_positions);
     void jointPosToEncSteps(std::vector<double>& joint_positions, std::vector<int>& enc_steps);
 };
 

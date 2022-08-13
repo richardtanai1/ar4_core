@@ -72,7 +72,8 @@ AR3HardwareInterface::AR3HardwareInterface(ros::NodeHandle &nh) : nh_(nh)
 		velocity_limits_[i] = radToDeg(velocity_limits_[i]);
 		acceleration_limits_[i] = radToDeg(acceleration_limits_[i]);
 	}
-	driver_.setStepperSpeed(velocity_limits_, acceleration_limits_);
+	// hard coded speeds for now
+	//driver_.setStepperSpeed(velocity_limits_, acceleration_limits_);
 
 	// calibrate joints if needed
 	bool use_existing_calibrations = false;

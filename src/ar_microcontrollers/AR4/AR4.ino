@@ -37,10 +37,11 @@ int JOINT_LIMIT_MAX[] = {170, 90, 52, 165, 105, 155};
 ///////////////////////////////////////////////////////////////////////////////
 
 // roughly equals 0, -6, 0, 0, 0, 0 degrees
-const int REST_ENC_POSITIONS[] = {75507, 20000, 49234, 70489, 11470, 34311};
+//const int REST_ENC_POSITIONS[] = {75507, 20000, 49234, 70489, 11470, 34311};
 //const int REST_ENC_POSITIONS[] = {75507, 22222, 49234, 70489, 11470, 34311};
 //const int REST_ENC_POSITIONS[] = {75507, 22222, 48123, 69634, 9830, 34311};
-//const int REST_ENC_POSITIONS[] = {75507, 22222, 48123, 60661, 9830, 34311};
+// const int REST_ENC_POSITIONS[] = {75507, 22222, 48123, 60661, 9830, 34311};
+const int REST_ENC_POSITIONS[] = {75556, 23333, 49444, 70498, 11476, 34444};
 enum SM { STATE_TRAJ, STATE_ERR };
 SM STATE = STATE_TRAJ;
 
@@ -52,10 +53,11 @@ const int LIMIT_SWITCH_HIGH[] = {
     1, 1, 1, 1, 1, 1};  // to account for both NC and NO limit switches
 const int CAL_DIR[] = {-1, -1, 1,
                        -1, -1, 1};  // joint rotation direction to limit switch
-//const int CAL_SPEED = 500;          // motor steps per second
-const int CAL_SPEED = 200;    
+const int CAL_SPEED = 500;          // motor steps per second
+// const int CAL_SPEED = 200;    
 const int CAL_SPEED_MULT[] = {
-    1, 1, 1, 2, 1, 1};  // multiplier to account for motor steps/rev
+    // 1, 1, 1, 2, 1, 1};  // multiplier to account for motor steps/rev
+    1, 1, 1, 2, 1, 1}; 
 
 // speed and acceleration settings
 float JOINT_MAX_SPEED[] = {30.0, 30.0, 30.0, 30.0, 30.0, 30.0};  // deg/s
@@ -148,7 +150,7 @@ void updateStepperSpeed(String inData) {
   JOINT_MAX_ACCEL[5] = inData.substring(idxAccelJ6 + 1).toFloat();
 }
 
-void calibrateJoints(int* calJoints) {
+void calibrateJoints(int* calJoints, int* calSteps, int* curMotorSteps) {
   // check which joints to calibrate
   bool calAllDone = false;
   bool calJointsDone[NUM_JOINTS];
@@ -180,17 +182,60 @@ void calibrateJoints(int* calJoints) {
   }
   delay(2000);
 
+  // record encoder steps
+  //int calSteps[6];
+  for (int i = 0; i < NUM_JOINTS; ++i) {
+    if (calJoints[i] == 1)
+    {
+      calSteps[i] = encPos[i].read();
+      encPos[i].write(ENC_RANGE_STEPS[i] * ENC_MAX_AT_ANGLE_MIN[i]);
+    }
+  }
+  // move away from the limit switches a bit so that if the next command
+  // is in the wrong direction, the limit switches will not be run over
+  // immediately and become damaged.
+  moveAwayFromLimitSwitch(calJoints);
+  // return to original position
+  for (int i = 0; i < NUM_JOINTS; ++i) {
+    stepperJoints[i].setAcceleration(JOINT_MAX_ACCEL[i] *
+                                     MOTOR_STEPS_PER_DEG[i]);
+    stepperJoints[i].setMaxSpeed(JOINT_MAX_SPEED[i] *
+                                 MOTOR_STEPS_PER_DEG[i]);
+  }
+  bool restPosReached = false;
+  while (!restPosReached) {
+    restPosReached = true;
+    readMotorSteps(curMotorSteps);
+    for (int i = 0; i < NUM_JOINTS; ++i) {
+      if ((abs(REST_ENC_POSITIONS[i] / ENC_MULT[i] - curMotorSteps[i]) >
+          10) && (calJoints[i] == 1)) {
+        restPosReached = false;
+        float target_pos =
+            (REST_ENC_POSITIONS[i] / ENC_MULT[i] - curMotorSteps[i]) *
+            ENC_DIR[i];
+        stepperJoints[i].move(target_pos);
+        stepperJoints[i].run();
+      }
+    }
+  }
   return;
 }
 
-void moveAwayFromLimitSwitch() {
+void moveAwayFromLimitSwitch(int* calJoints) {
   for (int i = 0; i < NUM_JOINTS; i++) {
     stepperJoints[i].setSpeed(CAL_SPEED * CAL_SPEED_MULT[i] * CAL_DIR[i] * -1);
   }
   for (int j = 0; j < 10000000; j++) {
+  // for (int j = 0; j < 250; j++) {
     for (int i = 0; i < NUM_JOINTS; ++i) {
-      stepperJoints[i].runSpeed();
+      if (calJoints[i] == 1)
+      {
+        stepperJoints[i].runSpeed();
+      }
+      
+      // delayMicroseconds(5);
     }
+    // delayMicroseconds(4000);
   }
   // redundancy
   for (int i = 0; i < NUM_JOINTS; i++) {
@@ -234,7 +279,7 @@ void stateTRAJ() {
     stepperJoints[i].setAcceleration(JOINT_MAX_ACCEL[i] *
                                      MOTOR_STEPS_PER_DEG[i]);
     stepperJoints[i].setMaxSpeed(JOINT_MAX_SPEED[i] * MOTOR_STEPS_PER_DEG[i]);
-    stepperJoints[i].setMinPulseWidth(10);
+    stepperJoints[i].setMinPulseWidth(20);
   }
   stepperJoints[3].setPinsInverted(false, false, false);  // J4 DM320T CCW
 
@@ -292,49 +337,61 @@ void stateTRAJ() {
         }
       } else if (function == "JC") {
         // calibrate all joints
-        int calJoints[] = {1, 1, 1, 1, 1, 1};
-        calibrateJoints(calJoints);
+        int calJoints[] = {0, 0, 0, 1, 1, 1};
+        int calSteps[6];
+        calibrateJoints(calJoints, calSteps, curMotorSteps);
+        calJoints[0] = 1;
+        calJoints[1] = 1;
+        calJoints[2] = 1;
+        calJoints[3] = 0;
+        calJoints[4] = 0;
+        calJoints[5] = 0;
+
+
+
+
+        calibrateJoints(calJoints, calSteps, curMotorSteps);
 
         // record encoder steps
-        int calSteps[6];
-        for (int i = 0; i < NUM_JOINTS; ++i) {
-          calSteps[i] = encPos[i].read();
-        }
+        // int calSteps[6];
+        // for (int i = 0; i < NUM_JOINTS; ++i) {
+        //   calSteps[i] = encPos[i].read();
+        // }
 
-        for (int i = 0; i < NUM_JOINTS; ++i) {
-          encPos[i].write(ENC_RANGE_STEPS[i] * ENC_MAX_AT_ANGLE_MIN[i]);
-        }
+        // for (int i = 0; i < NUM_JOINTS; ++i) {
+        //   encPos[i].write(ENC_RANGE_STEPS[i] * ENC_MAX_AT_ANGLE_MIN[i]);
+        // }
 
-        // move away from the limit switches a bit so that if the next command
-        // is in the wrong direction, the limit switches will not be run over
-        // immediately and become damaged.
-        moveAwayFromLimitSwitch();
+        // // move away from the limit switches a bit so that if the next command
+        // // is in the wrong direction, the limit switches will not be run over
+        // // immediately and become damaged.
+        // moveAwayFromLimitSwitch();
 
-        // return to original position
-        for (int i = 0; i < NUM_JOINTS; ++i) {
-          stepperJoints[i].setAcceleration(JOINT_MAX_ACCEL[i] *
-                                           MOTOR_STEPS_PER_DEG[i]);
-          stepperJoints[i].setMaxSpeed(JOINT_MAX_SPEED[i] *
-                                       MOTOR_STEPS_PER_DEG[i]);
-        }
+        // // return to original position
+        // for (int i = 0; i < NUM_JOINTS; ++i) {
+        //   stepperJoints[i].setAcceleration(JOINT_MAX_ACCEL[i] *
+        //                                    MOTOR_STEPS_PER_DEG[i]);
+        //   stepperJoints[i].setMaxSpeed(JOINT_MAX_SPEED[i] *
+        //                                MOTOR_STEPS_PER_DEG[i]);
+        // }
 
-        bool restPosReached = false;
-        while (!restPosReached) {
-          restPosReached = true;
-          readMotorSteps(curMotorSteps);
+        // bool restPosReached = false;
+        // while (!restPosReached) {
+        //   restPosReached = true;
+        //   readMotorSteps(curMotorSteps);
 
-          for (int i = 0; i < NUM_JOINTS; ++i) {
-            if (abs(REST_ENC_POSITIONS[i] / ENC_MULT[i] - curMotorSteps[i]) >
-                10) {
-              restPosReached = false;
-              float target_pos =
-                  (REST_ENC_POSITIONS[i] / ENC_MULT[i] - curMotorSteps[i]) *
-                  ENC_DIR[i];
-              stepperJoints[i].move(target_pos);
-              stepperJoints[i].run();
-            }
-          }
-        }
+        //   for (int i = 0; i < NUM_JOINTS; ++i) {
+        //     if (abs(REST_ENC_POSITIONS[i] / ENC_MULT[i] - curMotorSteps[i]) >
+        //         10) {
+        //       restPosReached = false;
+        //       float target_pos =
+        //           (REST_ENC_POSITIONS[i] / ENC_MULT[i] - curMotorSteps[i]) *
+        //           ENC_DIR[i];
+        //       stepperJoints[i].move(target_pos);
+        //       stepperJoints[i].run();
+        //     }
+        //   }
+        // }
 
         // calibration done, send calibration values
         String msg = String("JC") + "A" + calSteps[0] + "B" + calSteps[1] +

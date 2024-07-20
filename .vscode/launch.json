@@ -1,0 +1,51 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ROS: Launch hardware",
+      "type": "ros",
+      "request": "launch",
+      "target": "/home/richard/ar4_ros_driver/src/ar_hardware_interface/launch/ar_hardware.launch.py",
+      "arguments": [
+        "calibrate:=True",
+        "include_gripper:=False",
+        "serial_port:=/dev/ttyACM0"
+      ]
+    },
+    {
+      "name": "ROS: Launch Gazebo",
+      "type": "ros",
+      "request": "launch",
+      "target": "/home/richard/ar4_ros_driver/src/ar_gazebo/launch/ar_gazebo.launch.py",
+    },
+    {
+      "name": "ROS: Launch RVIZ",
+      "type": "ros",
+      "request": "launch",
+      "target": "/home/richard/ar4_ros_driver/src/ar_moveit_config/launch/ar_moveit.launch.py",
+      "arguments": [
+        "use_sim_time:=True",
+        "include_gripper:=False"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Gazebo/Rviz",
+      "configurations": [
+        "ROS: Launch Gazebo",
+        "ROS: Launch RVIZ"
+      ]
+    },
+    {
+      "name": "Hardware/RVIZ",
+      "configurations": [
+        "ROS: Launch hardware",
+        "ROS: Launch RVIZ"
+      ]
+    }
+  ]
+}

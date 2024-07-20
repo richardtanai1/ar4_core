@@ -38,6 +38,9 @@ int JOINT_LIMIT_MAX[] = {170, 90, 52, 165, 105, 155};
 
 // roughly equals 0, -6, 0, 0, 0, 0 degrees
 const int REST_ENC_POSITIONS[] = {75507, 20000, 49234, 70489, 11470, 34311};
+//const int REST_ENC_POSITIONS[] = {75507, 22222, 49234, 70489, 11470, 34311};
+//const int REST_ENC_POSITIONS[] = {75507, 22222, 48123, 69634, 9830, 34311};
+//const int REST_ENC_POSITIONS[] = {75507, 22222, 48123, 60661, 9830, 34311};
 enum SM { STATE_TRAJ, STATE_ERR };
 SM STATE = STATE_TRAJ;
 
@@ -49,7 +52,8 @@ const int LIMIT_SWITCH_HIGH[] = {
     1, 1, 1, 1, 1, 1};  // to account for both NC and NO limit switches
 const int CAL_DIR[] = {-1, -1, 1,
                        -1, -1, 1};  // joint rotation direction to limit switch
-const int CAL_SPEED = 500;          // motor steps per second
+//const int CAL_SPEED = 500;          // motor steps per second
+const int CAL_SPEED = 200;    
 const int CAL_SPEED_MULT[] = {
     1, 1, 1, 2, 1, 1};  // multiplier to account for motor steps/rev
 

@@ -6,8 +6,11 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/opt/ros/iron/include/**",
-        "${workspaceFolder}/ar_hardware_interface/include/**",
+        "/home/richard/ar4_ros_driver/install/ros2_aruco_interfaces/include/**",
+        "/home/richard/ar4_ros_driver/install/ar_hardware_interface/include/**",
+        "/home/richard/ar4_ros_driver/install/easy_handeye2_msgs/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/richard/ar4_ros_driver/src/ar_hardware_interface/include/**",
         "/usr/include/**"
       ],
       "name": "ROS",

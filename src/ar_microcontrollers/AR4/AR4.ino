@@ -337,8 +337,17 @@ void stateTRAJ() {
         }
       } else if (function == "JC") {
         // calibrate all joints
-        int calJoints[] = {0, 0, 0, 1, 1, 1};
         int calSteps[6];
+        int calJoints[] = {0, 0, 0, 1, 0, 0};
+        calibrateJoints(calJoints, calSteps, curMotorSteps);
+
+        calJoints[0] = 0;
+        calJoints[1] = 0;
+        calJoints[2] = 0;
+        calJoints[3] = 0;
+        calJoints[4] = 1;
+        calJoints[5] = 1;
+
         calibrateJoints(calJoints, calSteps, curMotorSteps);
         calJoints[0] = 1;
         calJoints[1] = 1;

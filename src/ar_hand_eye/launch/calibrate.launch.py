@@ -41,10 +41,10 @@ def generate_launch_description():
 
     calibration_args = {
         "name": "ar4_calibration",
-        "calibration_type": "eye_on_base",
+        "calibration_type": "eye_in_hand", # eye_on_base, eye_in_hand
         "robot_base_frame": "base_link",
         "robot_effector_frame": "ee_link",
-        "tracking_base_frame": "camera_color_frame",
+        "tracking_base_frame": "camera_color_optical_frame", # check if camera_color_optical_frame is needed
         "tracking_marker_frame": "calibration_aruco",
     }
 

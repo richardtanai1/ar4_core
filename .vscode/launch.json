@@ -11,8 +11,8 @@
       "target": "/home/richard/ar4_ros_driver/src/ar_hardware_interface/launch/ar_hardware.launch.py",
       "arguments": [
         "calibrate:=True",
-        "include_gripper:=False",
-        "serial_port:=/dev/ttyACM0"
+        "include_gripper:=True",
+        "serial_port:=/dev/ttyACM2"
       ]
     },
     {
@@ -27,8 +27,8 @@
       "request": "launch",
       "target": "/home/richard/ar4_ros_driver/src/ar_moveit_config/launch/ar_moveit.launch.py",
       "arguments": [
-        "use_sim_time:=True",
-        "include_gripper:=False"
+        "use_sim_time:=False",
+        "include_gripper:=True"
       ]
     }
   ],

@@ -109,7 +109,7 @@ def generate_launch_description():
     ld.add_action(
         DeclareLaunchArgument(
             "serial_port",
-            default_value="/dev/ttyACM0",
+            default_value="/dev/ttyACM1",
             description="Serial port to connect to the robot",
         ))
     ld.add_action(
@@ -129,7 +129,7 @@ def generate_launch_description():
     ld.add_action(
         DeclareLaunchArgument(
             "arduino_serial_port",
-            default_value="/dev/ttyUSB0",
+            default_value="/dev/ttyACM0",
             description="Serial port of the Arduino nano for the servo gripper",
         ))
     ld.add_action(

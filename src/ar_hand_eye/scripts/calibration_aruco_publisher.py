@@ -17,7 +17,7 @@ class CalibrationArucoPublisher(Node):
 
         # ID of the aruco marker mounted on the robot
         self.marker_id = self.declare_parameter(
-            "marker_id", 1).get_parameter_value().integer_value
+            "marker_id", 1).get_parameter_value().integer_value #test id 0
 
         self.tf_broadcaster = TransformBroadcaster(self)
         self.subscription = self.create_subscription(ArucoMarkers,

@@ -76,3 +76,9 @@ bld/
 # NUNIT
 *.VisualState.xml
 TestResult.xml
+
+
+*.pdf
+*.jpg
+*.gv
+*.pyc

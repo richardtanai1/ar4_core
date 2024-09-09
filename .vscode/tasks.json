@@ -28,20 +28,29 @@
 			"label": "colcon: clean",
 			"type": "shell",
 			"command": [
-				"cd project-workspace;",
-				"rm -rf build/ install/ log/;"
+				"cd /home/richard/ar4_ros_driver/",
+				"rm -rf build/ install/ log/"
+			]
+		},
+		{
+			"label": "launch: ros-jupyter",
+			"type": "shell",
+			"command": [
+				"source /home/richard/miniconda3/etc/profile.d/conda.sh",
+				"conda activate rgbd",
+				"source install/setup.bash",
 			]
 		},
 		{
 			"label": "colcon: test",
 			"type": "shell",
 			"command": [
-				"cd project-workspace;",
+				"cd /home/richard/ar4_ros_driver/",
 				"source /opt/ros/humble/setup.bash;",
 				"source install/setup.bash;",
 				"colcon test",
 				"--packages-select <package-name>",
-				"--event-handlers console_direct+;"
+				"--event-handlers console_direct+"
 			]
 		},
 		{

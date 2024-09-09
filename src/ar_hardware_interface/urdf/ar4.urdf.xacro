@@ -5,6 +5,7 @@
   <xacro:arg name="arduino_serial_port" default="/dev/ttyUSB0"/>
   <xacro:arg name="calibrate" default="True"/>
   <xacro:arg name="include_gripper" default="true"/>
+  <xacro:arg name="realsense" default="true"/>
   <xacro:include filename="$(find ar_description)/urdf/ar_macro.xacro"/>
   <xacro:include filename="$(find ar_description)/urdf/ar.ros2_control.xacro"/>
   
@@ -36,5 +37,13 @@
       serial_port="$(arg arduino_serial_port)"
     />
   </xacro:if>
+
+  <xacro:if value="$(arg include_camera)">
+    <xacro:arg name="use_nominal_extrinsics" default="false"/>
+    <xacro:arg name="add_plug" default="false" />
+    <xacro:arg name="use_mesh" default="true" />
+    <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  </xacro:if>
+
 
 </robot>

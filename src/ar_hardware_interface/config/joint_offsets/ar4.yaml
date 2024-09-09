@@ -9,8 +9,16 @@ joint_1: 170.0
 joint_2: -37.0
 joint_3: -89.0
 joint_4: -165.0
-joint_5: -95.0
-joint_6: -155.0
+joint_5: -90.0
+joint_6: -151.0
+
+
+# joint_1: 170.0
+# joint_2: -37.0
+# joint_3: -89.0
+# joint_4: -165.0
+# joint_5: -95.0
+# joint_6: -155.0
 
 # joint_1: 170.0
 # joint_2: -42.0

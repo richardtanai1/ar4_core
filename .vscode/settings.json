@@ -80,23 +80,33 @@
     "variant": "cpp",
     "*.ipp": "cpp"
   },
-  "ros.distro": "humble",
+  "ros.distro": "iron",
+  "ros.rosSetupScript": "/opt/ros/iron/setup.bash",
   "C_Cpp.default.includePath": [
-    "\"/opt/ros/humble/include/**\""
+    // "\"/opt/ros/humble/include/**\"",
+    "\"/opt/ros/iron/include/**\""
   ],
   "C_Cpp.default.cppStandard": "c++11",
   "python.autoComplete.extraPaths": [
-    "/opt/ros/humble/lib/python3.10/site-packages"
+    // "/opt/ros/humble/lib/python3.10/site-packages",
+    // "/opt/ros/humble/local/lib/python3.10/dist-packages",
+    "/opt/ros/iron/lib/python3.10/site-packages",
+    "/opt/ros/iron/local/lib/python3.10/dist-packages",
   ],
   "python.analysis.extraPaths": [
-    "/opt/ros/humble/lib/python3.10/site-packages"
+    "/opt/ros/iron/lib/python3.10/site-packages",
+    "/opt/ros/iron/local/lib/python3.10/dist-packages",
+    "./install/ros2_aruco_interfaces/local/lib/python3.10/dist-packages",
+    "/home/richard/miniconda3/envs/rgbd/lib/python3.10/site-packages",
+    "./install/ros2_aruco_interfaces/lib/python3.10/site-packages"
   ],
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "files.exclude": {
     "build": true,
-    "install": true,
+    "install": false,
     "log": true
   },
-  "cmake.configureOnOpen": true
+  "cmake.configureOnOpen": true,
+  "cmake.ignoreCMakeListsMissing": true
 }

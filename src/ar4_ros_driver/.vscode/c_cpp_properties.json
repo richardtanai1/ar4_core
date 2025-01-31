@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/richard/ar4_ros_driver_ws/install/ros2_aruco_interfaces/include/**",
+        "/home/richard/ar4_ros_driver_ws/install/ar_hardware_interface/include/**",
+        "/home/richard/ar4_ros_driver_ws/install/easy_handeye2_msgs/include/**",
+        "/opt/ros/iron/include/**",
+        "/home/richard/ar4_ros_driver_ws/src/ar4_ros_driver/ar_hardware_interface/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

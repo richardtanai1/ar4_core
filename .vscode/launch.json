@@ -8,7 +8,7 @@
       "name": "ROS: Launch Validae EIH",
       "type": "ros",
       "request": "launch",
-      "target": "/home/richard/ar4_ros_driver/src/ar_hand_eye/launch/validate_eih.launch.py"
+      "target": "/home/richard/ar4_ros_driver_ws/src/ar_hand_eye/launch/validate_eih.launch.py"
     },
     {
       "name": "ROS: Attach",
@@ -19,7 +19,7 @@
       "name": "ROS: Launch hardware",
       "type": "ros",
       "request": "launch",
-      "target": "/home/richard/ar4_ros_driver/src/ar_hardware_interface/launch/ar_hardware.launch.py",
+      "target": "/home/richard/ar4_ros_driver_ws/src/ar4_ros_driver/ar_hardware_interface/launch/ar_hardware.launch.py",
       "arguments": [
         "calibrate:=False",
         "include_gripper:=False",
@@ -30,19 +30,19 @@
       "name": "ROS: Launch Gazebo",
       "type": "ros",
       "request": "launch",
-      "target": "/home/richard/ar4_ros_driver/src/ar_gazebo/launch/ar_gazebo.launch.py",
+      "target": "/home/richard/ar4_ros_driver_ws/src/ar4_ros_driver/ar_gazebo/launch/ar_gazebo.launch.py",
     },
     {
       "name": "ROS: Launch Validate Calib",
       "type": "ros",
       "request": "launch",
-      "target": "/home/richard/ar4_ros_driver/src/ar_hand_eye/launch/validate.launch.py",
+      "target": "/home/richard/ar4_ros_driver_ws/src/ar4_ros_driver/ar_hand_eye/launch/validate.launch.py",
     },
     {
       "name": "ROS: Launch RVIZ",
       "type": "ros",
       "request": "launch",
-      "target": "/home/richard/ar4_ros_driver/src/ar_moveit_config/launch/ar_moveit.launch.py",
+      "target": "/home/richard/ar4_ros_driver_ws/src/ar4_ros_driver/ar_moveit_config/launch/ar_moveit.launch.py",
       "arguments": [
         "use_sim_time:=True",
         "include_gripper:=True"
